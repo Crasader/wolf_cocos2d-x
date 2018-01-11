@@ -34,11 +34,13 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.ConnectivityManager;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
 import android.os.Vibrator;
@@ -47,6 +49,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 
 import com.android.vending.expansion.zipfile.APKExpansionSupport;
 import com.android.vending.expansion.zipfile.ZipResourceFile;
@@ -63,6 +67,7 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 
 public class Cocos2dxHelper {
@@ -768,5 +773,79 @@ public class Cocos2dxHelper {
 
     public static int getSDKVersion() {
         return Build.VERSION.SDK_INT;
+    }
+
+     protected static final String PREFS_FILE = "gank_device_id.xml";
+    protected static final String PREFS_DEVICE_ID = "gank_device_id";
+    protected static String uuid;
+
+    public static String getuuid(){
+        if( uuid ==null ) {
+            synchronized (sActivity) {
+                if( uuid == null) {
+                    final SharedPreferences prefs = sActivity.getSharedPreferences( PREFS_FILE, 0);
+                    final String id = prefs.getString(PREFS_DEVICE_ID, null );
+
+                    if (id != null) {
+                        // Use the ids previously computed and stored in the prefs file
+                        uuid = id;
+                    } else {
+
+                        final String androidId = Settings.Secure.getString(sActivity.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+                        // Use the Android ID unless it's broken, in which case fallback on deviceId,
+                        // unless it's not available, then fallback on a random number which we store
+                        // to a prefs file
+                        try {
+                            if (!"9774d56d682e549c".equals(androidId)) {
+                                uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8")).toString();
+                            } else {
+                                final String deviceId = ((TelephonyManager) sActivity.getSystemService( Context.TELEPHONY_SERVICE )).getDeviceId();
+                                uuid = deviceId!=null ? UUID.nameUUIDFromBytes(deviceId.getBytes("utf8")).toString() : UUID.randomUUID().toString();
+                            }
+                        } catch (UnsupportedEncodingException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        // Write the value out to the prefs file
+                        prefs.edit().putString(PREFS_DEVICE_ID, uuid).commit();
+                    }
+                }
+            }
+        }
+        Log.d("getuuid", "uuid" + uuid);
+        return uuid;
+    }
+
+    /**
+     * 获取当前网络类型
+     * @return 0：没有网络   1：WIFI网络   2：WAP网络    3：NET网络
+     */
+
+    public static final int NETTYPE_WIFI = 0x01;
+    public static final int NETTYPE_CMWAP = 0x02;
+    public static final int NETTYPE_CMNET = 0x03;
+    public static int getNetworkType() {
+        int netType = 0;
+        ConnectivityManager connectivityManager = (ConnectivityManager) sActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo == null) {
+            return netType;
+        }
+        int nType = networkInfo.getType();
+        if (nType == ConnectivityManager.TYPE_MOBILE) {
+            String extraInfo = networkInfo.getExtraInfo();
+            //if(!StringUtils.isEmpty(extraInfo)){
+                if (extraInfo.toLowerCase().equals("cmnet")) {
+                    netType = NETTYPE_CMNET;
+                } else {
+                    netType = NETTYPE_CMWAP;
+                }
+            //}
+        } else if (nType == ConnectivityManager.TYPE_WIFI) {
+            netType = NETTYPE_WIFI;
+        }
+        Log.d("getNetworkType", "netType" + netType);
+        return netType;
     }
 }
