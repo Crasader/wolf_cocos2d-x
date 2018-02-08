@@ -67,6 +67,7 @@ void SpriteFrameCache::destroyInstance()
 
 bool SpriteFrameCache::init()
 {
+    _plistMap.clear();
     _spriteFrames.reserve(20);
     _spriteFramesAliases.reserve(20);
     _loadedFileNames = new std::set<std::string>();
@@ -135,7 +136,7 @@ void SpriteFrameCache::initializePolygonInfo(const Size &textureSize,
     info.setRect(Rect(0, 0, spriteSize.width, spriteSize.height));
 }
 
-void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D* texture)
+void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D* texture, const std::string plist)
 {
     /*
     Supported Zwoptex Formats:
@@ -291,12 +292,16 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
             texture->addSpriteFrameCapInset(spriteFrame, parser.parseCapInset());
         }
         // add sprite frame
+        
+        if( plist != "" )
+            _plistMap[spriteFrameName] = Value(plist);
+        
         _spriteFrames.insert(spriteFrameName, spriteFrame);
     }
     CC_SAFE_DELETE(image);
 }
 
-void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dict, const std::string &texturePath)
+void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dict, const std::string &texturePath, const std::string plist)
 {
     std::string pixelFormatName;
     if (dict.find("metadata") != dict.end())
@@ -340,7 +345,7 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dict, const std::
     
     if (texture)
     {
-        addSpriteFramesWithDictionary(dict, texture);
+        addSpriteFramesWithDictionary(dict, texture,plist);
     }
     else
     {
@@ -426,7 +431,7 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist)
 
             CCLOG("cocos2d: SpriteFrameCache: Trying to use file %s as texture", texturePath.c_str());
         }
-        addSpriteFramesWithDictionary(dict, texturePath);
+        addSpriteFramesWithDictionary(dict, texturePath,plist);
         _loadedFileNames->insert(plist);
     }
 }
@@ -480,6 +485,7 @@ void SpriteFrameCache::removeUnusedSpriteFrames()
     {
         _loadedFileNames->clear();
     }
+    
 }
 
 
@@ -575,6 +581,40 @@ void SpriteFrameCache::removeSpriteFramesFromTexture(Texture2D* texture)
 
 SpriteFrame* SpriteFrameCache::getSpriteFrameByName(const std::string& name)
 {
+    
+    SpriteFrame* frame = _spriteFrames.at(name);
+    if (!frame)
+    {
+        // try alias dictionary
+        if (_spriteFramesAliases.find(name) != _spriteFramesAliases.end())
+        {
+            std::string key = _spriteFramesAliases[name].asString();
+            if (!key.empty())
+            {
+                frame = _spriteFrames.at(key);
+                if (!frame)
+                {
+                    CCLOG("cocos2d: SpriteFrameCache: Frame aliases '%s' isn't found", key.c_str());
+                }
+            }
+        }
+        else
+        {
+            std::string key = _plistMap[name].asString();
+            if (!key.empty())
+            {
+                addSpriteFramesWithFile(key);
+                return getSpriteFrameByNameW(name);
+            }
+            CCLOG("cocos2d: SpriteFrameCache: Frame '%s' isn't found", name.c_str());
+        }
+    }
+    return frame;
+}
+
+SpriteFrame* SpriteFrameCache::getSpriteFrameByNameW(const std::string& name)
+{
+    
     SpriteFrame* frame = _spriteFrames.at(name);
     if (!frame)
     {

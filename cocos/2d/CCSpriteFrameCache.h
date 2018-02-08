@@ -233,6 +233,7 @@ public:
      * @return The sprite frame.
      */
     SpriteFrame* getSpriteFrameByName(const std::string& name);
+    SpriteFrame* getSpriteFrameByNameW(const std::string& name);
 
     /** @deprecated use getSpriteFrameByName() instead */
     CC_DEPRECATED_ATTRIBUTE SpriteFrame* spriteFrameByName(const std::string&name) { return getSpriteFrameByName(name); }
@@ -245,11 +246,11 @@ protected:
 
     /*Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
      */
-    void addSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D *texture);
+    void addSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D *texture, const std::string plist = "");
     
     /*Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
      */
-    void addSpriteFramesWithDictionary(ValueMap& dictionary, const std::string &texturePath);
+    void addSpriteFramesWithDictionary(ValueMap& dictionary, const std::string &texturePath, const std::string plist = "" );
     
     /** Removes multiple Sprite Frames from Dictionary.
     * @since v0.99.5
@@ -270,6 +271,7 @@ protected:
     void reloadSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D *texture);
 
     Map<std::string, SpriteFrame*> _spriteFrames;
+    ValueMap _plistMap;
     ValueMap _spriteFramesAliases;
     std::set<std::string>*  _loadedFileNames;
 };
