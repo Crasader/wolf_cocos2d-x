@@ -63,8 +63,11 @@ public:
     {
         setName(ListenerComponent::COMPONENT_NAME);
         
-        _touchListener = cocos2d::EventListenerTouchAllAtOnce::create();
-        _touchListener->onTouchesEnded = CC_CALLBACK_2(ListenerComponent::onTouchesEnded, this);
+//        _touchListener = cocos2d::EventListenerTouchAllAtOnce::create();
+//        _touchListener->onTouchesEnded = CC_CALLBACK_2(ListenerComponent::onTouchesEnded, this);
+        _touchListener = cocos2d::EventListenerTouchOneByOne::create();
+        _touchListener->onTouchBegan = CC_CALLBACK_2(ListenerComponent::onTouchBegan, this);
+        _touchListener->onTouchEnded = CC_CALLBACK_2(ListenerComponent::onTouchEnded, this);
 
         Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_touchListener, _parent);
         _touchListener->retain();
@@ -81,9 +84,12 @@ public:
     : _parent(parent)
     ,_callback(callback)
     {
-        _touchListener = cocos2d::EventListenerTouchAllAtOnce::create();
-        _touchListener->onTouchesEnded = CC_CALLBACK_2(ListenerComponent::onTouchesEnded, this);
-        Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_touchListener, 1);
+//        _touchListener = cocos2d::EventListenerTouchAllAtOnce::create();
+//        _touchListener->onTouchesEnded = CC_CALLBACK_2(ListenerComponent::onTouchesEnded, this);
+        _touchListener = cocos2d::EventListenerTouchOneByOne::create();
+        _touchListener->onTouchBegan = CC_CALLBACK_2(ListenerComponent::onTouchBegan, this);
+        _touchListener->onTouchEnded = CC_CALLBACK_2(ListenerComponent::onTouchEnded, this);
+        Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_touchListener, -1);
         _touchListener->retain();
     }
     
@@ -91,6 +97,27 @@ public:
     {
         Director::getInstance()->getEventDispatcher()->removeEventListener(_touchListener);
         _touchListener->release();
+    }
+    
+    bool onTouchBegan(Touch* /*pTouch*/, Event* /*pEvent*/)
+    {
+        return true;
+    }
+    
+    void onTouchEnded(Touch* pTouch, Event* pEvent)
+    {
+        // FIXME: Node::getBoundBox() doesn't return it in local coordinates... so create one manually.
+        Rect localRect = Rect(Vec2::ZERO, _parent->getContentSize());
+        if (localRect.containsPoint(_parent->convertTouchToNodeSpace(pTouch))) {
+            if(_handleOpenUrl && _url.length() > 0)
+            {
+                _handleOpenUrl(_url);
+            }
+            else if (_callback)
+            {
+                _callback(1);
+            }
+        }
     }
 
     void onTouchesEnded(const std::vector<Touch*>& touches, Event* /*event*/)
@@ -122,7 +149,7 @@ private:
     std::string _url;
     RichText::OpenUrlHandler _handleOpenUrl;
     EventDispatcher* _eventDispatcher;  // weak ref.
-    EventListenerTouchAllAtOnce* _touchListener;    // strong ref.
+    EventListenerTouchOneByOne* _touchListener;    // strong ref.
     ccFuncBack _callback;
 };
 const std::string ListenerComponent::COMPONENT_NAME("cocos2d_ui_UIRichText_ListenerComponent");
