@@ -7,6 +7,7 @@
 #include "Helpers.h"
 #include "UdbNetClient.hpp"
 #include "UdbManager.hpp"
+#include "EdgeMaskLayer.hpp"
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 
@@ -2765,6 +2766,98 @@ int lua_register_wolf_game_UdbManager(lua_State* tolua_S)
     g_typeCast["UdbManager"] = "UdbManager";
     return 1;
 }
+
+int lua_wolf_game_EdgeMaskLayer_create(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertable(tolua_S,1,"cc.EdgeMaskLayer",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+
+    if (argc == 0)
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_wolf_game_EdgeMaskLayer_create'", nullptr);
+            return 0;
+        }
+        cocos2d::EdgeMaskLayer* ret = cocos2d::EdgeMaskLayer::create();
+        object_to_luaval<cocos2d::EdgeMaskLayer>(tolua_S, "cc.EdgeMaskLayer",(cocos2d::EdgeMaskLayer*)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "cc.EdgeMaskLayer:create",argc, 0);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_wolf_game_EdgeMaskLayer_create'.",&tolua_err);
+#endif
+    return 0;
+}
+int lua_wolf_game_EdgeMaskLayer_constructor(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::EdgeMaskLayer* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_wolf_game_EdgeMaskLayer_constructor'", nullptr);
+            return 0;
+        }
+        cobj = new cocos2d::EdgeMaskLayer();
+        cobj->autorelease();
+        int ID =  (int)cobj->_ID ;
+        int* luaID =  &cobj->_luaID ;
+        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"cc.EdgeMaskLayer");
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.EdgeMaskLayer:EdgeMaskLayer",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_error(tolua_S,"#ferror in function 'lua_wolf_game_EdgeMaskLayer_constructor'.",&tolua_err);
+#endif
+
+    return 0;
+}
+
+static int lua_wolf_game_EdgeMaskLayer_finalize(lua_State* tolua_S)
+{
+    printf("luabindings: finalizing LUA object (EdgeMaskLayer)");
+    return 0;
+}
+
+int lua_register_wolf_game_EdgeMaskLayer(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,"cc.EdgeMaskLayer");
+    tolua_cclass(tolua_S,"EdgeMaskLayer","cc.EdgeMaskLayer","cc.Layer",nullptr);
+
+    tolua_beginmodule(tolua_S,"EdgeMaskLayer");
+        tolua_function(tolua_S,"new",lua_wolf_game_EdgeMaskLayer_constructor);
+        tolua_function(tolua_S,"create", lua_wolf_game_EdgeMaskLayer_create);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(cocos2d::EdgeMaskLayer).name();
+    g_luaType[typeName] = "cc.EdgeMaskLayer";
+    g_typeCast["EdgeMaskLayer"] = "cc.EdgeMaskLayer";
+    return 1;
+}
 TOLUA_API int register_all_wolf_game(lua_State* tolua_S)
 {
 	tolua_open(tolua_S);
@@ -2775,6 +2868,7 @@ TOLUA_API int register_all_wolf_game(lua_State* tolua_S)
 	lua_register_wolf_game_Live2DNode(tolua_S);
 	lua_register_wolf_game_CGdxParticle(tolua_S);
 	lua_register_wolf_game_SdkHelpers(tolua_S);
+	lua_register_wolf_game_EdgeMaskLayer(tolua_S);
 	lua_register_wolf_game_UdbManager(tolua_S);
 	lua_register_wolf_game_PbcHelper(tolua_S);
 	lua_register_wolf_game_NativeHelpers(tolua_S);

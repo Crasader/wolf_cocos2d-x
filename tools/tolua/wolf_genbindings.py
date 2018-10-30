@@ -112,9 +112,10 @@ def main():
     cxx_generator_root = os.path.abspath(os.path.join(project_root, 'tools/bindings-generator'))
 
     print 'project_root: %s' %project_root
+    print '*******ERROR*******look*******look*******look*******wolf_genbindings.py*******real_root*******'
     # save config to file
     config = ConfigParser.ConfigParser()
-    config.set('DEFAULT', 'real_root', '/Users/jason/Documents/git/fly_angel/ThunderGirl2Ex')
+    config.set('DEFAULT', 'real_root', '/Users/mac/Documents/git/newgame/ThunderGirl2Ex')
     config.set('DEFAULT', 'androidndkdir', ndk_root)
     config.set('DEFAULT', 'clangllvmdir', llvm_path)
     config.set('DEFAULT', 'cocosdir', cocos_root)
