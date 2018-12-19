@@ -626,6 +626,15 @@ const char* Device::getUUid()
     return [identifierForVendor UTF8String];;
 }
 
+//add by liuyuedong
+
+const char* Device::getPackageName()
+{
+    NSString* app_PackageName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
+    
+    return [app_PackageName UTF8String];;
+}
+
 int Device::getNetworkType()
 {
     UIApplication *app = [UIApplication sharedApplication];

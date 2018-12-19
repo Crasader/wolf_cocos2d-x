@@ -103,6 +103,12 @@ public:
      */
     static const char* getUUid();
     
+    //add liuyuedong
+    /**
+     * Gets 包名
+     */
+    static const char* getPackageName();
+    
     static int getNetworkType();
     
     //机型
