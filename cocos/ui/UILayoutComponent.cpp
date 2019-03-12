@@ -49,6 +49,7 @@ namespace ui {
         , _usingPercentHeight(false)
         , _actived(true)
         , _isPercentOnly(false)
+        , _is_set_ui_design_anchor_point(false)
     {
         _name = __LAYOUT_COMPONENT_NAME;
     }
@@ -548,10 +549,16 @@ namespace ui {
             }
             else
             {
-                if (_usingPositionPercentX)
-                    ownerPosition.x = parentSize.width * _positionPercentX;
                 if (_usingPercentWidth)
                     ownerSize.width = parentSize.width * _percentWidth;
+                if (_usingPositionPercentX){
+                    if(_is_set_ui_design_anchor_point){
+                        ownerPosition.x = parentSize.width * _positionPercentX + ownerSize.width * (ownerAnchor.x - _ui_design_anchor_point.x);
+                    }
+                    else{
+                        ownerPosition.x = parentSize.width * _positionPercentX;
+                    }
+                }
             }
             break;
         case HorizontalEdge::Left:
@@ -582,7 +589,12 @@ namespace ui {
             {
                 if (_usingPercentWidth)
                     ownerSize.width = parentSize.width * _percentWidth;
-                ownerPosition.x = parentSize.width * _positionPercentX;
+                if(_is_set_ui_design_anchor_point){
+                    ownerPosition.x = parentSize.width * _positionPercentX + ownerSize.width * (ownerAnchor.x - _ui_design_anchor_point.x);
+                }
+                else{
+                    ownerPosition.x = parentSize.width * _positionPercentX;
+                }
             }
             break;
         default:
@@ -599,10 +611,16 @@ namespace ui {
             }
             else
             {
-                if (_usingPositionPercentY)
-                    ownerPosition.y = parentSize.height * _positionPercentY;
                 if (_usingPercentHeight)
                     ownerSize.height = parentSize.height * _percentHeight;
+                if (_usingPositionPercentY){
+                    if(_is_set_ui_design_anchor_point){
+                        ownerPosition.y = parentSize.height * _positionPercentY + ownerSize.height * (ownerAnchor.y - _ui_design_anchor_point.y);
+                    }
+                    else{
+                        ownerPosition.y = parentSize.height * _positionPercentY;
+                    }
+                }
             }
             break;
         case VerticalEdge::Bottom:
@@ -633,7 +651,12 @@ namespace ui {
             {
                 if (_usingPercentHeight)
                     ownerSize.height = parentSize.height * _percentHeight;
-                ownerPosition.y = parentSize.height* _positionPercentY;
+                if(_is_set_ui_design_anchor_point){
+                    ownerPosition.y = parentSize.height* _positionPercentY + ownerSize.height * (ownerAnchor.y - _ui_design_anchor_point.y);
+                }
+                else{
+                    ownerPosition.y = parentSize.height* _positionPercentY;
+                }
             }
             break;
         default:
@@ -668,6 +691,12 @@ namespace ui {
     void LayoutComponent::setPercentOnlyEnabled(bool enable)
     {
         _isPercentOnly = enable;
+    }
+    
+    void LayoutComponent::setUIDesignAnchorPoint(const Vec2& point)
+    {
+        _ui_design_anchor_point = point;
+        _is_set_ui_design_anchor_point = true;
     }
 }
 

@@ -90,6 +90,7 @@ public:
     ActionTimeline* loadAnimationWithDataBuffer(const cocos2d::Data& data, const std::string& fileName);
     
     ActionTimeline* createActionWithFlatBuffersForSimulator(const std::string& fileName);
+    bool isUnableChangeAnchorPointByActionTag(int actionTag);
     
 protected:
 
@@ -133,6 +134,7 @@ protected:
 
     std::unordered_map<std::string, FrameCreateFunc> _funcs;
     cocos2d::Map<std::string, ActionTimeline*> _animationActions;
+    std::map<int, bool> _timelineUnableChangeAnchorPointMap;
 };
 
 NS_TIMELINE_END

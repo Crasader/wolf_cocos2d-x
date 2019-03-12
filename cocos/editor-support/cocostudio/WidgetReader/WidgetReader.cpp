@@ -4,6 +4,7 @@
 
 #include "editor-support/cocostudio/CocoLoader.h"
 #include "ui/UIButton.h"
+#include "editor-support/cocostudio/ActionTimeline/CCActionTimelineCache.h"
 #include "editor-support/cocostudio/ActionTimeline/CCActionTimeline.h"
 #include "editor-support/cocostudio/CCComExtensionData.h"
 #include "editor-support/cocostudio/CSParseBinary_generated.h"
@@ -798,6 +799,9 @@ namespace cocostudio
         widget->ignoreContentAdaptWithSize(false);
         Size contentSize(options->size()->width(), options->size()->height());
         widget->setContentSize(contentSize);
+        Vec2 position(options->position()->x(), options->position()->y());
+        auto f_anchorPoint = options->anchorPoint();
+        Vec2 anchorPoint(f_anchorPoint->scaleX(), f_anchorPoint->scaleY());
         
         int tag = options->tag();
         widget->setTag(tag);
@@ -822,17 +826,41 @@ namespace cocostudio
         std::string name = options->name()->c_str();
         widget->setName(name);
         
-        Vec2 position(options->position()->x(), options->position()->y());
-        widget->setPosition(position);
-        
         float scaleX = options->scale()->scaleX();
-        widget->setScaleX(scaleX);
         float scaleY = options->scale()->scaleY();
+        float rotationSkewX = options->rotationSkew()->rotationSkewX();
+        float rotationSkewY = options->rotationSkew()->rotationSkewY();
+        
+        bool is_fix_anchor = false;
+        Layout* layout = dynamic_cast<Layout*>(node);
+        if(layout){
+            if(layout->isClippingEnabled()){
+                cocostudio::timeline::ActionTimelineCache* actionTimelineCache = cocostudio::timeline::ActionTimelineCache::getInstance();
+                if(rotationSkewX == 0 && rotationSkewY == 0 && !actionTimelineCache->isUnableChangeAnchorPointByActionTag(actionTag)){
+                    if(anchorPoint.x != 0){
+                        position.x = position.x - contentSize.width * scaleX * anchorPoint.x;
+                        anchorPoint.x = 0;
+                        is_fix_anchor = true;
+                    }
+                    if(anchorPoint.y != 0){
+                        position.y = position.y - contentSize.height * scaleY * anchorPoint.y;
+                        anchorPoint.y = 0;
+                        is_fix_anchor = true;
+                    }
+                }
+                else{
+                    layout->setClippingType(cocos2d::ui::Layout::ClippingType::STENCIL);
+                }
+            }
+        }
+        
+        widget->setPosition(position);
+        widget->setAnchorPoint(anchorPoint);
+        
+        widget->setScaleX(scaleX);
         widget->setScaleY(scaleY);
         
-        float rotationSkewX = options->rotationSkew()->rotationSkewX();
         widget->setRotationSkewX(rotationSkewX);
-        float rotationSkewY = options->rotationSkew()->rotationSkewY();
         widget->setRotationSkewY(rotationSkewY);
         
         bool visible = options->visible() != 0;
@@ -848,10 +876,6 @@ namespace cocostudio
         int alpha = options->alpha();
         widget->setOpacity(alpha);
         
-        auto f_anchorPoint = options->anchorPoint();
-        Vec2 anchorPoint(f_anchorPoint->scaleX(), f_anchorPoint->scaleY());
-        widget->setAnchorPoint(anchorPoint);
-        
         bool flippedX = options->flipX() != 0;
         widget->setFlippedX(flippedX);
         bool flippedY = options->flipY() != 0;
@@ -862,10 +886,10 @@ namespace cocostudio
         std::string callbackName = options->callBackName()->c_str();
         widget->setCallbackName(callbackName);
         
-        setLayoutComponentPropsWithFlatBuffers(widget, widgetOptions);
+        setLayoutComponentPropsWithFlatBuffers(widget, widgetOptions, is_fix_anchor);
     }
 
-    void WidgetReader::setLayoutComponentPropsWithFlatBuffers(cocos2d::Node* node, const flatbuffers::Table* nodeOptions)
+    void WidgetReader::setLayoutComponentPropsWithFlatBuffers(cocos2d::Node* node, const flatbuffers::Table* nodeOptions, bool is_fix_anchor)
     {
         auto layoutComponentTable = ((WidgetOptions*)nodeOptions)->layoutComponent();
         if (!layoutComponentTable) return;
@@ -888,6 +912,13 @@ namespace cocostudio
         float rightMargin = layoutComponentTable->rightMargin();
         float topMargin = layoutComponentTable->topMargin();
         float bottomMargin = layoutComponentTable->bottomMargin();
+        
+        if(is_fix_anchor){
+            auto options = (WidgetOptions*)nodeOptions;
+            auto f_anchorPoint = options->anchorPoint();
+            Vec2 anchorPoint(f_anchorPoint->scaleX(), f_anchorPoint->scaleY());
+            layoutComponent->setUIDesignAnchorPoint(anchorPoint);
+        }
 
         layoutComponent->setPositionPercentXEnabled(positionXPercentEnabled);
         layoutComponent->setPositionPercentYEnabled(positionYPercentEnabled);

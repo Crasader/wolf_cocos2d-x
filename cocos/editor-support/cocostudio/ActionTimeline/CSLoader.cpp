@@ -277,6 +277,7 @@ Node* CSLoader::createNode(const std::string& filename)
 
     if (suffix == "csb")
     {
+        createTimeline(filename);
         return load->createNodeWithFlatBuffersFile(filename);
     }
     else if (suffix == "json" || suffix == "ExportJson")
