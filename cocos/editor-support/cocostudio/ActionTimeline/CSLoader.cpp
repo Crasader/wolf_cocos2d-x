@@ -277,7 +277,6 @@ Node* CSLoader::createNode(const std::string& filename)
 
     if (suffix == "csb")
     {
-        createTimeline(filename);
         return load->createNodeWithFlatBuffersFile(filename);
     }
     else if (suffix == "json" || suffix == "ExportJson")
@@ -1022,8 +1021,8 @@ Node* CSLoader::nodeWithFlatBuffers(const flatbuffers::NodeTree *nodetree, const
             if (filePath != "" && FileUtils::getInstance()->isFileExist(filePath))
             {
                 Data buf = FileUtils::getInstance()->getDataFromFile(filePath);
-                node = createNode(buf, callback);
                 action = createTimeline(buf, filePath);
+                node = createNode(buf, callback);
             }
             else
             {
