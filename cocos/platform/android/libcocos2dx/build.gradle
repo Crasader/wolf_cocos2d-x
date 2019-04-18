@@ -1,10 +1,10 @@
 apply plugin: 'com.android.library'
 
-def env = System.getenv()
-def cocos_path = env["COCOS_X_ROOT"]
+// def env = System.getenv()
+// def cocos_path = env["COCOS_X_ROOT"]
 
 android {
-    compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
+    compileSdkVersion 26
     buildToolsVersion '25.0.0'
 
     defaultConfig {
@@ -15,9 +15,11 @@ android {
     }
 
     sourceSets.main {
+        aidl.srcDir "../java/src"
+        java.srcDir "../java/src"
 
-        aidl.srcDir cocos_path + "/cocos/platform/android/java/src"
-        java.srcDir cocos_path + "/cocos/platform/android/java/src"
+        // aidl.srcDir cocos_path + "/cocos/platform/android/java/src"
+        // java.srcDir cocos_path + "/cocos/platform/android/java/src"
         manifest.srcFile "AndroidManifest.xml"
     }
 
@@ -30,5 +32,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: cocos_path + '/cocos/platform/android/java/libs', include: ['*.jar'])
+    // compile fileTree(dir: cocos_path + '/cocos/platform/android/java/libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: '../java/libs')
 }

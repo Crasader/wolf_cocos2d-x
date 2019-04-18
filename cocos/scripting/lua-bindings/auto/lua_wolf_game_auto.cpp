@@ -9,6 +9,7 @@
 #include "UdbManager.hpp"
 #include "EdgeMaskLayer.hpp"
 #include "BiMgr.hpp"
+#include "KaopuMgr.hpp"
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 
@@ -2977,6 +2978,175 @@ int lua_register_wolf_game_BiMgr(lua_State* tolua_S)
     g_typeCast["BiMgr"] = "BiMgr";
     return 1;
 }
+
+int lua_wolf_game_KaopuMgr_submitExtraData(lua_State* tolua_S)
+{
+    int argc = 0;
+    KaopuMgr* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"KaopuMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (KaopuMgr*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_wolf_game_KaopuMgr_submitExtraData'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) 
+    {
+        const char* arg0;
+
+        std::string arg0_tmp; ok &= luaval_to_std_string(tolua_S, 2, &arg0_tmp, "KaopuMgr:submitExtraData"); arg0 = arg0_tmp.c_str();
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_wolf_game_KaopuMgr_submitExtraData'", nullptr);
+            return 0;
+        }
+        cobj->submitExtraData(arg0);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "KaopuMgr:submitExtraData",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_wolf_game_KaopuMgr_submitExtraData'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_wolf_game_KaopuMgr_logout(lua_State* tolua_S)
+{
+    int argc = 0;
+    KaopuMgr* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"KaopuMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (KaopuMgr*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_wolf_game_KaopuMgr_logout'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_wolf_game_KaopuMgr_logout'", nullptr);
+            return 0;
+        }
+        cobj->logout();
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "KaopuMgr:logout",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_wolf_game_KaopuMgr_logout'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_wolf_game_KaopuMgr_feedback(lua_State* tolua_S)
+{
+    int argc = 0;
+    KaopuMgr* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"KaopuMgr",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (KaopuMgr*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_wolf_game_KaopuMgr_feedback'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) 
+    {
+        const char* arg0;
+
+        std::string arg0_tmp; ok &= luaval_to_std_string(tolua_S, 2, &arg0_tmp, "KaopuMgr:feedback"); arg0 = arg0_tmp.c_str();
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_wolf_game_KaopuMgr_feedback'", nullptr);
+            return 0;
+        }
+        cobj->feedback(arg0);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "KaopuMgr:feedback",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_wolf_game_KaopuMgr_feedback'.",&tolua_err);
+#endif
+
+    return 0;
+}
+static int lua_wolf_game_KaopuMgr_finalize(lua_State* tolua_S)
+{
+    printf("luabindings: finalizing LUA object (KaopuMgr)");
+    return 0;
+}
+
+int lua_register_wolf_game_KaopuMgr(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,"KaopuMgr");
+    tolua_cclass(tolua_S,"KaopuMgr","KaopuMgr","cc.Ref",nullptr);
+
+    tolua_beginmodule(tolua_S,"KaopuMgr");
+        tolua_function(tolua_S,"submitExtraData",lua_wolf_game_KaopuMgr_submitExtraData);
+        tolua_function(tolua_S,"logout",lua_wolf_game_KaopuMgr_logout);
+        tolua_function(tolua_S,"feedback",lua_wolf_game_KaopuMgr_feedback);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(KaopuMgr).name();
+    g_luaType[typeName] = "KaopuMgr";
+    g_typeCast["KaopuMgr"] = "KaopuMgr";
+    return 1;
+}
 TOLUA_API int register_all_wolf_game(lua_State* tolua_S)
 {
 	tolua_open(tolua_S);
@@ -2988,6 +3158,7 @@ TOLUA_API int register_all_wolf_game(lua_State* tolua_S)
 	lua_register_wolf_game_CGdxParticle(tolua_S);
 	lua_register_wolf_game_SdkHelpers(tolua_S);
 	lua_register_wolf_game_BiMgr(tolua_S);
+	lua_register_wolf_game_KaopuMgr(tolua_S);
 	lua_register_wolf_game_EdgeMaskLayer(tolua_S);
 	lua_register_wolf_game_UdbManager(tolua_S);
 	lua_register_wolf_game_PbcHelper(tolua_S);

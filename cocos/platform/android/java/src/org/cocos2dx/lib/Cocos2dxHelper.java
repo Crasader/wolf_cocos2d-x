@@ -848,4 +848,12 @@ public class Cocos2dxHelper {
         Log.d("getNetworkType", "netType" + netType);
         return netType;
     }
+
+    public static String getCurrentDeviceModel() {
+        return android.os.Build.MODEL;
+    }
+
+    public static String getSystemVersion() {
+        return android.os.Build.VERSION.RELEASE;
+    }
 }
