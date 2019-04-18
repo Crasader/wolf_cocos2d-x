@@ -384,6 +384,9 @@ namespace ui {
          *@param enable True if active layout component, false otherwise.
          */
         void setActiveEnabled(bool enable);
+        
+        //设置UI设计的锚点，裁切需要把锚点改为Vec(0,0)点，修改了UI设计时的锚点
+        void setUIDesignAnchorPoint(const Vec2& point);
 
         /**
          * Refresh layout of the owner.
@@ -419,6 +422,9 @@ namespace ui {
 
         bool            _actived;
         bool            _isPercentOnly;
+        
+        bool            _is_set_ui_design_anchor_point;//是否设置过ui设计时的锚点。默认没有
+        Vec2            _ui_design_anchor_point;//ui设计时的锚点
     };
 }
 

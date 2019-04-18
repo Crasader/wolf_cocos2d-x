@@ -549,16 +549,19 @@ Timeline* ActionTimelineCache::loadTimelineWithFlatBuffers(const flatbuffers::Ti
             {
                 auto potisionFrame = frameFlatbuf->pointFrame();
                 frame = loadPositionFrameWithFlatBuffers(potisionFrame);
+                _timelineUnableChangeAnchorPointMap[actionTag] = true;
             }
             else if (property == Property_Scale)
             {
                 auto scaleFrame = frameFlatbuf->scaleFrame();
                 frame = loadScaleFrameWithFlatBuffers(scaleFrame);
+                _timelineUnableChangeAnchorPointMap[actionTag] = true;
             }
             else if (property == Property_RotationSkew)
             {
                 auto scaleFrame = frameFlatbuf->scaleFrame();
                 frame = loadRotationSkewFrameWithFlatBuffers(scaleFrame);
+                _timelineUnableChangeAnchorPointMap[actionTag] = true;
             }
             else if (property == Property_CColor)
             {
@@ -584,6 +587,7 @@ Timeline* ActionTimelineCache::loadTimelineWithFlatBuffers(const flatbuffers::Ti
             {
                 auto scaleFrame = frameFlatbuf->scaleFrame();
                 frame = loadAnchorPointFrameWithFlatBuffers(scaleFrame);
+                _timelineUnableChangeAnchorPointMap[actionTag] = true;
             }
             else if (property == Property_ZOrder)
             {
@@ -1007,6 +1011,17 @@ ActionTimeline* ActionTimelineCache::createActionWithFlatBuffersForSimulator(con
     fbs->deleteFlatBufferBuilder();
     return action;
 }
+    
+    
+    bool ActionTimelineCache::isUnableChangeAnchorPointByActionTag(int actionTag)
+    {
+        auto it = _timelineUnableChangeAnchorPointMap.find(actionTag);
+        if(it != _timelineUnableChangeAnchorPointMap.end()) {
+            CCLOG("_timelineUnableChangeAnchorPointMap count:%lu, actionTag:%d is true", _timelineUnableChangeAnchorPointMap.size(), actionTag);
+            return it->second;
+        }
+        return false;
+    }
 
 }
 }
