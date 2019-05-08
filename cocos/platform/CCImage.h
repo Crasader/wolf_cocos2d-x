@@ -131,9 +131,10 @@ public:
     * @lua NA
     */
     bool initWithImageData(const unsigned char * data, ssize_t dataLen);
-
     // @warning kFmtRawData only support RGBA8888
     bool initWithRawData(const unsigned char * data, ssize_t dataLen, int width, int height, int bitsPerComponent, bool preMulti = false);
+    
+    int strncmp_m(const unsigned char *s1,const unsigned char *s2,int n);
 
     // Getters
     unsigned char *   getData()               { return _data; }

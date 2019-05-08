@@ -31,6 +31,7 @@ THE SOFTWARE.
 
 #include "base/CCData.h"
 #include "base/ccConfig.h" // CC_USE_JPEG, CC_USE_TIFF, CC_USE_WEBP
+#include "xxtea/xxtea.h"
 
 extern "C"
 {
@@ -504,18 +505,48 @@ Image::~Image()
         CC_SAFE_FREE(_data);
 }
 
+int Image::strncmp_m(const unsigned char *s1,const unsigned char *s2,int n)
+{
+   //判断str1与str2指针是否为NULL
+    assert(s1!=NULL && s2 !=NULL);
+    
+    while(n--)
+    {
+        if(*s1 == 0 || *s1 != *s2)
+        {
+            return *s1 - *s2;
+        }
+        s1++;
+        s2++;
+　　}
+　　return 0;
+}
+
 bool Image::initWithImageFile(const std::string& path)
 {
     bool ret = false;
     _filePath = FileUtils::getInstance()->fullPathForFilename(path);
-
+   
     Data data = FileUtils::getInstance()->getDataFromFile(_filePath);
-
-    if (!data.isNull())
+    unsigned char sign[100] = "jiemogeng";
+    if (strncmp_m((unsigned char *)data.getBytes(), sign, strlen("jiemogeng")) == 0)
     {
-        ret = initWithImageData(data.getBytes(), data.getSize());
+        xxtea_long ret_len = 0;
+        unsigned char key[100] = "jason";
+        unsigned char* result = xxtea_decrypt(data.getBytes() + strlen("jiemogeng"), data.getSize() - strlen("jiemogeng"), key, strlen("jason"), &ret_len);
+        Data result_png;
+        result_png.fastSet(result, ret_len);
+        ret = initWithImageData(result_png.getBytes(), result_png.getSize());
     }
+    else
+    {
+        if (!data.isNull())
+        {
+            ret = initWithImageData(data.getBytes(), data.getSize());
 
+        }
+    }
+    
     return ret;
 }
 
