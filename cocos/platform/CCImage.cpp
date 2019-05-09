@@ -518,8 +518,8 @@ int Image::strncmp_m(const unsigned char *s1,const unsigned char *s2,int n)
         }
         s1++;
         s2++;
-　　}
-　　return 0;
+    }
+    return 0;
 }
 
 bool Image::initWithImageFile(const std::string& path)
