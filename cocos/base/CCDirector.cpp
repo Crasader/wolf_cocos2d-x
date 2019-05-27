@@ -116,6 +116,7 @@ Director::Director()
 : _isStatusLabelUpdated(true)
 , _invalid(true)
 , _deltaTimePassedByCaller(false)
+, _isMultipleTouchEnabled(false)
 {
 }
 
@@ -1561,6 +1562,10 @@ void Director::setAnimationInterval(float interval, SetIntervalReason reason)
         stopAnimation();
         startAnimation(reason);
     }
+}
+
+void Director::setMultipleTouchEnabled(bool isMultipleTouchEnabled){
+    this->_isMultipleTouchEnabled = isMultipleTouchEnabled;
 }
 
 NS_CC_END

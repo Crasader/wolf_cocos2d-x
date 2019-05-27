@@ -997,7 +997,13 @@ void EventDispatcher::dispatchTouchEvent(EventTouch* event)
                 {
                     if (listener->onTouchBegan)
                     {
-                        isClaimed = listener->onTouchBegan(touches, event);
+                        bool isMultipleTouchEnabled = Director::getInstance()->isMultipleTouchEnabled();
+                        if(!isMultipleTouchEnabled && touches->getID() != 0){
+                            isClaimed = false;
+                        }
+                        else{
+                            isClaimed = listener->onTouchBegan(touches, event);
+                        }
                         if (isClaimed && listener->_isRegistered)
                         {
                             listener->_claimedTouches.push_back(touches);

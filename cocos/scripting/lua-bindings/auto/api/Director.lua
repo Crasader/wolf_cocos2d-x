@@ -258,6 +258,13 @@
 -- @return mat4_table#mat4_table ret (return value: mat4_table)
         
 --------------------------------
+-- 
+-- @function [parent=#Director] setMultipleTouchEnabled 
+-- @param self
+-- @param #bool isMultipleTouchEnabled
+-- @return Director#Director self (return value: cc.Director)
+        
+--------------------------------
 -- returns whether or not the Director is in a valid state
 -- @function [parent=#Director] isValid 
 -- @param self
@@ -532,6 +539,12 @@
 -- @function [parent=#Director] getAnimationInterval 
 -- @param self
 -- @return float#float ret (return value: float)
+        
+--------------------------------
+-- 
+-- @function [parent=#Director] isMultipleTouchEnabled 
+-- @param self
+-- @return bool#bool ret (return value: bool)
         
 --------------------------------
 --  Whether or not the Director is paused. 

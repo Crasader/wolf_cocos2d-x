@@ -604,6 +604,9 @@ public:
      * returns whether or not the Director is in a valid state
      */
     bool isValid() const { return !_invalid; }
+    
+    void setMultipleTouchEnabled(bool isMultipleTouchEnabled);
+    bool isMultipleTouchEnabled() const { return _isMultipleTouchEnabled; }
 
 protected:
     void reset();
@@ -740,6 +743,8 @@ protected:
 
     /* whether or not the director is in a valid state */
     bool _invalid;
+    
+    bool _isMultipleTouchEnabled;
 
     // GLView will recreate stats labels to fit visible rect
     friend class GLView;
