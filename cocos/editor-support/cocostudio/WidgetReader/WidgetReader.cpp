@@ -850,6 +850,7 @@ namespace cocostudio
                 }
                 else{
                     layout->setClippingType(cocos2d::ui::Layout::ClippingType::STENCIL);
+                    CCLOG("不能使用高效裁切的节点名：%s", name.c_str());
                 }
             }
         }
