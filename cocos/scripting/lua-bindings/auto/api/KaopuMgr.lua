@@ -19,6 +19,12 @@
         
 --------------------------------
 -- 
+-- @function [parent=#KaopuMgr] reAuth 
+-- @param self
+-- @return KaopuMgr#KaopuMgr self (return value: KaopuMgr)
+        
+--------------------------------
+-- 
 -- @function [parent=#KaopuMgr] feedback 
 -- @param self
 -- @param #char jsonData
