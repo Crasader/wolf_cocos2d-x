@@ -86,4 +86,5 @@ int register_all_wolf_game(lua_State* tolua_S);
 
 
 
+
 #endif // __wolf_game_h__

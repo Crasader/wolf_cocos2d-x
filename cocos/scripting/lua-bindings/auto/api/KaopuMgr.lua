@@ -13,6 +13,12 @@
         
 --------------------------------
 -- 
+-- @function [parent=#KaopuMgr] startYsdkBbs 
+-- @param self
+-- @return KaopuMgr#KaopuMgr self (return value: KaopuMgr)
+        
+--------------------------------
+-- 
 -- @function [parent=#KaopuMgr] logout 
 -- @param self
 -- @return KaopuMgr#KaopuMgr self (return value: KaopuMgr)
