@@ -28,7 +28,6 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
@@ -195,19 +194,19 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
         mTargetState  = STATE_IDLE;
     }
     
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP)
-        {
-            if (isPlaying()) {
-                pause();
-            } else if(mCurrentState == STATE_PAUSED){
-                resume();
-            }
-        }
-        
-        return true;
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP)
+//        {
+//            if (isPlaying()) {
+//                pause();
+//            } else if(mCurrentState == STATE_PAUSED){
+//                resume();
+//            }
+//        }
+//
+//        return true;
+//    }
     
     private boolean mIsAssetRouse = false;
     private String mVideoFilePath = null;
@@ -559,10 +558,12 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
         {
             mSurfaceHolder = holder;
             openVideo();
+            start();
         }
 
         public void surfaceDestroyed(SurfaceHolder holder)
         {
+            mSeekWhenPrepared = getCurrentPosition();
             // after we return from this we can't use the surface any more
             mSurfaceHolder = null;
             
